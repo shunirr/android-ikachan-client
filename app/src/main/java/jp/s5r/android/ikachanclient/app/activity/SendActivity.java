@@ -78,13 +78,7 @@ public class SendActivity extends FragmentActivity {
             @Override
             public void success(JSONObject jsonObject, Response response) {
                 mProgressDialog.dismiss();
-
-                if (jsonObject.has("success")) {
-                    showSuccessMessage();
-                } else {
-                    showFailedMessage(null);
-                }
-
+                showSuccessMessage();
                 SendActivity.this.finish();
             }
 

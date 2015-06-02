@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import jp.s5r.android.ikachanclient.App;
 import jp.s5r.android.ikachanclient.R;
@@ -24,6 +25,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 String endpointStr = endpoint.getText().toString();
                 App.getInstance().setEndpoint(endpointStr);
+                Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
         });
     }
