@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import jp.s5r.android.ikachanclient.App;
 import jp.s5r.android.ikachanclient.app.dialog.SelectChannelDialog;
+import jp.s5r.android.ikachanclient.util.Config;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -26,7 +27,7 @@ public class SendActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!App.getInstance().hasEndpoint()) {
+        if (!Config.hasEndpoint(this)) {
             Toast.makeText(this, "Set ikachan endpoint.", Toast.LENGTH_SHORT).show();
             finish();
             return;

@@ -12,16 +12,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import jp.s5r.android.ikachanclient.App;
 import jp.s5r.android.ikachanclient.app.activity.SendActivity;
+import jp.s5r.android.ikachanclient.util.Config;
 
 public class SelectChannelDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final EditText editText = new EditText(getActivity());
-        if (App.getInstance().hasLastChannel()) {
-            editText.setText(App.getInstance().getLastChannel());
+        if (Config.hasLastChannel(getActivity())) {
+            editText.setText(Config.getLastChannel(getActivity()));
         }
 
         final AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -30,7 +30,7 @@ public class SelectChannelDialog extends DialogFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String channel = editText.getText().toString();
-                        App.getInstance().setLastChannel(channel);
+                        Config.setLastChannel(getActivity(), channel);
 
                         Activity a = getActivity();
                         if (a != null && a instanceof SendActivity) {
