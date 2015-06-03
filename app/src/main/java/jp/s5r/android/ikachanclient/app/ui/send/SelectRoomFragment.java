@@ -3,6 +3,7 @@ package jp.s5r.android.ikachanclient.app.ui.send;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -90,6 +91,22 @@ public class SelectRoomFragment extends BaseFragment {
                 mDb.close();
             }
             mDb = Realm.getInstance(getActivity().getApplicationContext());
+        }
+
+        ActionBar ab = getActionBar();
+        if (ab != null) {
+            ab.getCustomView().findViewById(R.id.action_bar_button_left).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
+            ab.getCustomView().findViewById(R.id.action_bar_button_right).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSubmit(mSelectRoomEditText.getText().toString());
+                }
+            });
         }
     }
 
