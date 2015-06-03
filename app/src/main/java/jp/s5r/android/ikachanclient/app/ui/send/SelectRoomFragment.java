@@ -46,6 +46,22 @@ public class SelectRoomFragment extends BaseFragment {
                 mSelectRoomEditText.setText(room.getName());
             }
         });
+        mSelectRoomList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Room room = mAdapter.getItem(position);
+                mDb.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.where(Room.class)
+                                .equalTo("id", room.getId())
+                                .findAll()
+                                .clear();
+                    }
+                });
+                return true;
+            }
+        });
         mSelectRoomEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -100,7 +116,7 @@ public class SelectRoomFragment extends BaseFragment {
         if (TextUtils.isEmpty(name)) {
             return;
         }
-        if (mDb.where(Room.class).contains("name", name).count() == 0) {
+        if (mDb.where(Room.class).equalTo("name", name).count() == 0) {
             mDb.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
