@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.realm.Realm;
@@ -95,6 +97,7 @@ public class SelectRoomFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         RealmResults<Room> rooms = mDb.where(Room.class).findAll();
+        rooms.sort("lastUsedAt", false);
         mAdapter = new RoomAdapter(getActivity().getApplicationContext(), rooms, true);
         mSelectRoomList.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
@@ -110,6 +113,7 @@ public class SelectRoomFragment extends BaseFragment {
                 Room room = realm.createObject(Room.class);
                 room.setId(realm.where(Room.class).count() + 1);
                 room.setName(name);
+                room.setLastUsedAt(new Date());
             }
         });
     }

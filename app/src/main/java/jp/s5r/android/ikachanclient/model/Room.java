@@ -1,5 +1,7 @@
 package jp.s5r.android.ikachanclient.model;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
@@ -10,6 +12,8 @@ public class Room extends RealmObject {
 
     @Index
     private String name;
+
+    private Date lastUsedAt;
 
     public long getId() {
         return id;
@@ -25,5 +29,13 @@ public class Room extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getLastUsedAt() {
+        return lastUsedAt;
+    }
+
+    public void setLastUsedAt(Date lastUsedAt) {
+        this.lastUsedAt = lastUsedAt;
     }
 }
