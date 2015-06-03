@@ -25,8 +25,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
 
     compile 'io.reactivex:rxandroid:0.24.0'
-
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.joanzapata.android:android-iconify:1.0.9'
 }

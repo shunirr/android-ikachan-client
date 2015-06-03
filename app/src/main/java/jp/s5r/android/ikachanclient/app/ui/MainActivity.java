@@ -1,6 +1,5 @@
-package jp.s5r.android.ikachanclient.app.activity;
+package jp.s5r.android.ikachanclient.app.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -9,7 +8,7 @@ import android.widget.Toast;
 import jp.s5r.android.ikachanclient.R;
 import jp.s5r.android.ikachanclient.util.Config;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,5 +27,10 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected int getContentResId() {
+        return 0;
     }
 }
