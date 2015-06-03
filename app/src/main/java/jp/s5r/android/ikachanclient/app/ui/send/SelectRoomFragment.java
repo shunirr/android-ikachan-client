@@ -3,13 +3,12 @@ package jp.s5r.android.ikachanclient.app.ui.send;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,17 +39,11 @@ public class SelectRoomFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_select_room, null);
         ButterKnife.inject(this, v);
-        mSelectRoomEditText.addTextChangedListener(new TextWatcher() {
+        mSelectRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Room room = mAdapter.getItem(position);
+                mSelectRoomEditText.setText(room.getName());
             }
         });
         mSelectRoomEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -129,8 +122,8 @@ public class SelectRoomFragment extends BaseFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Room room = getItem(position);
-            View v = mInflater.inflate(android.R.layout.simple_list_item_1, null);
-            TextView tv = (TextView) v.findViewById(android.R.id.text1);
+            View v = mInflater.inflate(R.layout.select_room_item, null);
+            TextView tv = (TextView) v.findViewById(R.id.select_room_list_text);
             tv.setText(room.getName());
             return v;
         }
