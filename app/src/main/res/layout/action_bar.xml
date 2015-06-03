@@ -1,7 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    >
+
+    <android.widget.IconButton
+        android:id="@+id/action_bar_button_left"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:paddingLeft="4dp"
+        android:gravity="center|left"
+        android:background="@android:color/transparent"
+        android:text="{fa-times}"
+        android:textColor="#FFF"
+        android:textSize="20dp"
+        />
+
+    <TextView
+        android:id="@+id/action_bar_title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center|left"
+        android:text="Ikachan Send"
+        android:textColor="#FFF"
+        android:textSize="20dp"
+        />
+
+    <android.widget.IconButton
+        android:id="@+id/action_bar_button_right"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:paddingRight="4dp"
+        android:gravity="center|right"
+        android:background="@android:color/transparent"
+        android:text="{fa-paper-plane}"
+        android:textColor="#FFF"
+        android:textSize="20dp"
+        />
 
 </LinearLayout>
