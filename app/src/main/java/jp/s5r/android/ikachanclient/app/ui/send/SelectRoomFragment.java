@@ -100,15 +100,17 @@ public class SelectRoomFragment extends BaseFragment {
         if (TextUtils.isEmpty(name)) {
             return;
         }
-        mDb.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Room room = realm.createObject(Room.class);
-                room.setId(realm.where(Room.class).count() + 1);
-                room.setName(name);
-                room.setLastUsedAt(new Date());
-            }
-        });
+        if (mDb.where(Room.class).contains("name", name).count() == 0) {
+            mDb.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Room room = realm.createObject(Room.class);
+                    room.setId(realm.where(Room.class).count() + 1);
+                    room.setName(name);
+                    room.setLastUsedAt(new Date());
+                }
+            });
+        }
     }
 
     static class RoomAdapter extends RealmBaseAdapter<Room> {
