@@ -157,10 +157,21 @@ public class SelectRoomFragment extends BaseFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Room room = getItem(position);
-            View v = mInflater.inflate(R.layout.select_room_item, null);
-            TextView tv = (TextView) v.findViewById(R.id.select_room_list_text);
-            tv.setText(room.getName());
-            return v;
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.select_room_item, null);
+                holder = new ViewHolder();
+                holder.text = (TextView) convertView.findViewById(R.id.select_room_list_text);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.text.setText(room.getName());
+            return convertView;
+        }
+
+        static class ViewHolder {
+            TextView text;
         }
     }
 }
