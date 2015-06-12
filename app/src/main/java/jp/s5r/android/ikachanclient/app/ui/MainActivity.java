@@ -28,9 +28,4 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
-    @Override
-    protected int getContentResId() {
-        return 0;
-    }
 }

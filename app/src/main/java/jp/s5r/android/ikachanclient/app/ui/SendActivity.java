@@ -1,8 +1,7 @@
-package jp.s5r.android.ikachanclient.app.ui.send;
+package jp.s5r.android.ikachanclient.app.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -22,10 +21,9 @@ import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import jp.s5r.android.ikachanclient.R;
-import jp.s5r.android.ikachanclient.app.ui.BaseFragment;
 import jp.s5r.android.ikachanclient.model.Room;
 
-public class SelectRoomFragment extends BaseFragment {
+public class SendActivity extends BaseActivity {
 
     @InjectView(R.id.select_room_edittext)
     EditText mSelectRoomEditText;
@@ -34,12 +32,36 @@ public class SelectRoomFragment extends BaseFragment {
 
     private Realm mDb;
     private RoomAdapter mAdapter;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_select_room, null);
-        ButterKnife.inject(this, v);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_send);
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayShowTitleEnabled(false);
+            ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM);
+            ab.setCustomView(R.layout.action_bar);
+            ab.getCustomView().findViewById(R.id.action_bar_button_left).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+            ab.getCustomView().findViewById(R.id.action_bar_button_right).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSubmit(mSelectRoomEditText.getText().toString());
+                }
+            });
+        }
+
+        if (mDb != null) {
+            mDb.close();
+        }
+        mDb = Realm.getInstance(getApplicationContext());
+
+        ButterKnife.inject(this);
         mSelectRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,49 +96,15 @@ public class SelectRoomFragment extends BaseFragment {
                 return false;
             }
         });
-        return v;
     }
 
     @Override
-    public void onDestroyView() {
-        ButterKnife.reset(this);
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isAdded()) {
-            if (mDb != null) {
-                mDb.close();
-            }
-            mDb = Realm.getInstance(getActivity().getApplicationContext());
-        }
-
-        ActionBar ab = getActionBar();
-        if (ab != null) {
-            ab.getCustomView().findViewById(R.id.action_bar_button_left).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getActivity().finish();
-                }
-            });
-            ab.getCustomView().findViewById(R.id.action_bar_button_right).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onSubmit(mSelectRoomEditText.getText().toString());
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onDetach() {
+    protected void onDestroy() {
         if (mDb != null) {
             mDb.close();
             mDb = null;
         }
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override
@@ -124,7 +112,7 @@ public class SelectRoomFragment extends BaseFragment {
         super.onResume();
         RealmResults<Room> rooms = mDb.where(Room.class).findAll();
         rooms.sort("lastUsedAt", false);
-        mAdapter = new RoomAdapter(getActivity().getApplicationContext(), rooms, true);
+        mAdapter = new RoomAdapter(getApplicationContext(), rooms, true);
         mSelectRoomList.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name=".app.ui.send.SendActivity"
+            android:name=".app.ui.SendActivity"
             android:label="Ikachan Send"
             >
             <intent-filter>
