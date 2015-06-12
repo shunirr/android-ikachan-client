@@ -25,9 +25,9 @@ import jp.s5r.android.ikachanclient.model.Room;
 
 public class SendActivity extends BaseActivity {
 
-    @InjectView(R.id.select_room_edittext)
+    @InjectView(R.id.send_room_edittext)
     EditText mSelectRoomEditText;
-    @InjectView(R.id.select_room_list)
+    @InjectView(R.id.send_room_list)
     ListView mSelectRoomList;
 
     private Realm mDb;
