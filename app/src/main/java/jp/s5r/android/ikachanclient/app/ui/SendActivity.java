@@ -1,11 +1,13 @@
 package jp.s5r.android.ikachanclient.app.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,17 +28,39 @@ import jp.s5r.android.ikachanclient.model.Room;
 public class SendActivity extends BaseActivity {
 
     @InjectView(R.id.send_room_edittext)
-    EditText mSelectRoomEditText;
+    EditText mRoomEditText;
     @InjectView(R.id.send_room_list)
-    ListView mSelectRoomList;
+    ListView mRoomList;
+    @InjectView(R.id.send_message_edittext)
+    EditText mMessageEditText;
 
     private Realm mDb;
     private RoomAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
+        ButterKnife.inject(this);
 
+        initDb();
+        initActionBar();
+        initViews();
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+            mMessageEditText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+        }
+    }
+
+    private void initDb() {
+        if (mDb != null) {
+            mDb.close();
+        }
+        mDb = Realm.getInstance(getApplicationContext());
+    }
+
+    private void initActionBar() {
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayShowTitleEnabled(false);
@@ -51,25 +75,23 @@ public class SendActivity extends BaseActivity {
             ab.getCustomView().findViewById(R.id.action_bar_button_right).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onSubmit(mSelectRoomEditText.getText().toString());
+                    onSubmit(mRoomEditText.getText().toString());
                 }
             });
         }
+    }
 
-        if (mDb != null) {
-            mDb.close();
-        }
-        mDb = Realm.getInstance(getApplicationContext());
-
-        ButterKnife.inject(this);
-        mSelectRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private void initViews() {
+        mRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Room room = mAdapter.getItem(position);
-                mSelectRoomEditText.setText(room.getName());
+                mRoomEditText.setText(room.getName());
+                mRoomEditText.clearFocus();
+                mRoomList.setVisibility(View.GONE);
             }
         });
-        mSelectRoomList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mRoomList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final Room room = mAdapter.getItem(position);
@@ -85,13 +107,34 @@ public class SendActivity extends BaseActivity {
                 return true;
             }
         });
-        mSelectRoomEditText.setOnKeyListener(new View.OnKeyListener() {
+
+        mRoomEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER
                         && event.getAction() == KeyEvent.ACTION_UP) {
-                    onSubmit(mSelectRoomEditText.getText().toString());
+                    onSubmit(mRoomEditText.getText().toString());
                     return true;
+                }
+                return false;
+            }
+        });
+
+        mRoomEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mRoomList.setVisibility(View.VISIBLE);
+                }
+                return false;
+            }
+        });
+
+        mMessageEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mRoomList.setVisibility(View.GONE);
                 }
                 return false;
             }
@@ -113,7 +156,7 @@ public class SendActivity extends BaseActivity {
         RealmResults<Room> rooms = mDb.where(Room.class).findAll();
         rooms.sort("lastUsedAt", false);
         mAdapter = new RoomAdapter(getApplicationContext(), rooms, true);
-        mSelectRoomList.setAdapter(mAdapter);
+        mRoomList.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -139,7 +182,7 @@ public class SendActivity extends BaseActivity {
 
         public RoomAdapter(Context context, RealmResults<Room> realmResults, boolean automaticUpdate) {
             super(context, realmResults, automaticUpdate);
-            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
@@ -149,10 +192,10 @@ public class SendActivity extends BaseActivity {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.select_room_item, null);
                 holder = new ViewHolder();
-                holder.text = (TextView) convertView.findViewById(R.id.select_room_list_text);
+                holder.text = (TextView)convertView.findViewById(R.id.select_room_list_text);
                 convertView.setTag(holder);
             } else {
-                holder = (ViewHolder) convertView.getTag();
+                holder = (ViewHolder)convertView.getTag();
             }
             holder.text.setText(room.getName());
             return convertView;
