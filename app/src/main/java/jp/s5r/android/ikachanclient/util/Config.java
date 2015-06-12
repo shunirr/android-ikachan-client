@@ -8,6 +8,7 @@ public final class Config {
     private static final String PREFS_NAME = "config";
 
     private static final String KEY_ENDPOINT = "endpoint";
+    private static final String KEY_PREFIX = "prefix";
     private static final String KEY_LAST_CHANNEL = "last_channel";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
@@ -30,6 +31,19 @@ public final class Config {
 
     public static String getEndpoint(Context context) {
         return getString(context, KEY_ENDPOINT);
+    }
+
+    public static boolean hasPrefix(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.contains(KEY_PREFIX) && !TextUtils.isEmpty(prefs.getString(KEY_PREFIX, null));
+    }
+
+    public static void setPrefix(Context context, String endpoint) {
+        putStringOrRemove(context, KEY_PREFIX, endpoint);
+    }
+
+    public static String getPrefix(Context context) {
+        return getString(context, KEY_PREFIX);
     }
 
     public static boolean hasLastChannel(Context context) {

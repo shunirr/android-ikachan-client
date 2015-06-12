@@ -20,6 +20,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="http://ikachan.exmaple.com"
+        android:textColor="#000"
+        />
+
+    <TextView
+        android:text="Sender Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/main_edittext_prefix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="PasoconTaro"
+        android:textColor="#000"
         />
 
     <Button

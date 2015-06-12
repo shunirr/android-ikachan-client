@@ -28,6 +28,7 @@ import io.realm.RealmResults;
 import jp.s5r.android.ikachanclient.App;
 import jp.s5r.android.ikachanclient.R;
 import jp.s5r.android.ikachanclient.model.Room;
+import jp.s5r.android.ikachanclient.util.Config;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -55,9 +56,17 @@ public class SendActivity extends BaseActivity {
         initActionBar();
         initViews();
 
+        String message = "";
+        if (Config.hasPrefix(this)) {
+            message += "[" + Config.getPrefix(this) + "] ";
+        }
+
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
-            mMessageEditText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            message += intent.getStringExtra(Intent.EXTRA_TEXT);
+        }
+        if (!TextUtils.isEmpty(message)) {
+            mMessageEditText.setText(message);
         }
     }
 

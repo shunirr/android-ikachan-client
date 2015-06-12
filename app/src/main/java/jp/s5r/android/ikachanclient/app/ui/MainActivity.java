@@ -18,12 +18,18 @@ public class MainActivity extends BaseActivity {
         if (Config.hasEndpoint(this)) {
             endpoint.setText(Config.getEndpoint(this));
         }
+        final EditText prefix = (EditText) findViewById(R.id.main_edittext_prefix);
+        if (Config.hasPrefix(this)) {
+            prefix.setText(Config.getPrefix(this));
+        }
 
         findViewById(R.id.main_button_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String endpointStr = endpoint.getText().toString();
+                String prefixStr = prefix.getText().toString();
                 Config.setEndpoint(MainActivity.this, endpointStr);
+                Config.setPrefix(MainActivity.this, prefixStr);
                 Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
         });
