@@ -1,11 +1,11 @@
 package jp.s5r.android.ikachanclient.app.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +14,9 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -22,8 +25,12 @@ import butterknife.InjectView;
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
+import jp.s5r.android.ikachanclient.App;
 import jp.s5r.android.ikachanclient.R;
 import jp.s5r.android.ikachanclient.model.Room;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class SendActivity extends BaseActivity {
 
@@ -36,6 +43,7 @@ public class SendActivity extends BaseActivity {
 
     private Realm mDb;
     private RoomAdapter mAdapter;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +83,7 @@ public class SendActivity extends BaseActivity {
             ab.getCustomView().findViewById(R.id.action_bar_button_right).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onSubmit(mRoomEditText.getText().toString());
+                    onSubmit(mRoomEditText.getText().toString(), mMessageEditText.getText().toString());
                 }
             });
         }
@@ -105,18 +113,6 @@ public class SendActivity extends BaseActivity {
                     }
                 });
                 return true;
-            }
-        });
-
-        mRoomEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    onSubmit(mRoomEditText.getText().toString());
-                    return true;
-                }
-                return false;
             }
         });
 
@@ -160,20 +156,60 @@ public class SendActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void onSubmit(final String name) {
-        if (TextUtils.isEmpty(name)) {
+    private void onSubmit(final String roomName, final String message) {
+        if (TextUtils.isEmpty(roomName) || TextUtils.isEmpty(message)) {
             return;
         }
-        if (mDb.where(Room.class).equalTo("name", name).count() == 0) {
+        if (mDb.where(Room.class).equalTo("name", roomName).count() == 0) {
             mDb.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     Room room = realm.createObject(Room.class);
                     room.setId(realm.where(Room.class).count() + 1);
-                    room.setName(name);
+                    room.setName(roomName);
                     room.setLastUsedAt(new Date());
                 }
             });
+        }
+
+        sendToIkachan(roomName, message);
+    }
+
+    public void sendToIkachan(final String roomName, final String message) {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.show();
+
+        App.getInstance().getIkachanApi().notice(roomName, message, new Callback<JSONObject>() {
+            @Override
+            public void success(JSONObject jsonObject, Response response) {
+                mProgressDialog.dismiss();
+                showSuccessMessage();
+                SendActivity.this.finish();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                mProgressDialog.dismiss();
+                showFailedMessage(error);
+                SendActivity.this.finish();
+            }
+        });
+    }
+
+    private void showSuccessMessage() {
+        Toast.makeText(this, "Ikachan success", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showFailedMessage(Throwable e) {
+        if (e != null) {
+            Toast.makeText(this, "Ikachan failed: " + e.toString(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Ikachan failed", Toast.LENGTH_SHORT).show();
         }
     }
 
